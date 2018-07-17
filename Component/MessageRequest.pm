@@ -3,7 +3,7 @@ package Component::MessageRequest;
 use v5.10;
 use JSON;
 use Try::Tiny;
-use YAML::Tiny;
+use Config::Tiny;
 use MIME::Base64;
 use Time::HiRes;
 
@@ -11,8 +11,10 @@ use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(MakeDiscordGet MakeDiscordPostJson); # can be
 our @EXPORT = qw(MakeDiscordGet MakeDiscordPostJson); # defaults to
-my $yaml = YAML::Tiny->read('config.yml');
-my $API_DISCORD = $yaml->[0]->{discord_api};
+
+my $configFile = "config.ini";
+my $config = Config::Tiny->read($configFile, 'utf8');
+my $API_DISCORD = $config->{'discord'}->{'token'};
 
 # @_[0] = endpoint /users/\@me
 # @_[1] = 
@@ -20,11 +22,11 @@ my $API_DISCORD = $yaml->[0]->{discord_api};
 # @_[3] = sleep time, if !defined then default.2
 sub MakeDiscordGet {
 	my ($endpoint, $etc, $return_json, $sleep_time) = @_;
-    my $useragent = 'DiscordBot (http://ilankleiman.com, 4.0.0)';
-    my $content_type = 'application/x-www-form-urlencoded';
+	my $useragent = 'DiscordBot (http://ilankleiman.com, 4.0.0)';
+	my $content_type = 'application/x-www-form-urlencoded';
 	my $api_key = 'Bot ' . $API_DISCORD;
 	my $base_url = 'https://discordapp.com/api';
-    my $ua = Mojo::UserAgent->new;
+	my $ua = Mojo::UserAgent->new;
 	my %headers = (
 		'Authorization'		=> $api_key,
 		'Content-Type' 		=> $content_type,
@@ -65,11 +67,11 @@ sub MakeDiscordPostJson {
 	else {
 		$message = $json;
 	}
-    my $useragent = 'DiscordBot (http://ilankleiman.com, 4.0.0)';
-    my $content_type = 'application/json';
+	my $useragent = 'DiscordBot (http://ilankleiman.com, 4.0.0)';
+	my $content_type = 'application/json';
 	my $api_key = 'Bot ' . $API_DISCORD;
 	my $base_url = 'https://discordapp.com/api';
-    my $ua = Mojo::UserAgent->new;
+	my $ua = Mojo::UserAgent->new;
 	my %headers = (
 		'Authorization'		=> $api_key,
 		'Content-Type' 		=> $content_type,

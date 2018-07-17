@@ -29,6 +29,12 @@ class HeaderFlags {
 			case 'text':
 				header('Content-Type: text; charset=utf-8');
 				break;
+			case 'text/html':
+				header('Content-Type: text/html; charset=utf-8');
+				break;
+			case 'image':
+				header('Content-Type: image/gif; charset=utf-8');
+				break;
 			default:
 				header('Content-Type: text; charset=utf-8');
 		}

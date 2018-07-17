@@ -58,14 +58,50 @@ class Promotion {
             $userData->setBattleTag($row->battle_tag);
             $userData->setPath($row->path);
             $userData->setServer($row->server);
+            $userData->setRace($row->race);
+            $userData->setClanTag($this->clanTag);
             
             $promoData = $userData->toKeyArray();
             $promoData['promoted_min_ago'] = round((time() - $row->join_time_stamp) / 60);
-            
+            $promoData['discord_id'] = $this->getDiscordName($row->battle_tag);
+
             $promosData[] = array_filter($promoData);
+
+            $this->updateUserAlerted($row->battle_tag);
+        }
+        
+        return $promosData;
+    }
+
+    private function getDiscordName(string $battleTag) {
+        $this->db->connect();
+
+        preg_match('/(^[0-9a-zA-Z\W\d]+)/', $battleTag, $match);
+        $battleTagClean = str_replace("\\", "", $match[0]);
+
+        $query = "
+            SELECT 
+                `id`
+            FROM 
+                `everyone_social` 
+            WHERE 
+                `battle_tag` = ?
+        ";
+
+        $result = $this->db->doRawQuery($query, [$battleTagClean]);
+
+        $this->db->disconnect();
+
+        $row = $result->fetch_object();
+        
+        if (!is_null($row)) {
+            $discordTag = $row->{'id'};
+        }
+        else {
+            $discordTag = "";
         }
 
-        return $promosData;
+        return $discordTag;
     }
 
     private function updateUserAlerted(string $battleTag) {
@@ -90,7 +126,7 @@ class Promotion {
 
         $query = "
             SELECT 
-                `name`, `league`, `tier`, `join_time_stamp`, `battle_tag`, `path`, `server`
+                `name`, `league`, `tier`, `join_time_stamp`, `battle_tag`, `path`, `server`, `race`
             FROM 
                 `everyone` 
             WHERE 
@@ -102,7 +138,7 @@ class Promotion {
         ";
 
         // Get list of users promoted within last 3600 seconds. AKA last hour.
-        $timeFrame = time() - 86400;
+        $timeFrame = time() - 3600;
 
         $params = [$timeFrame, $this->clanTag];
 

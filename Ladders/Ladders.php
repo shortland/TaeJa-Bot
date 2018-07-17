@@ -292,7 +292,7 @@ class Ladders {
 	 * of hardcoding it here?
 	 */
 	private function setLastUpdate() {
-		$last = fopen('../../GOOSE/lastupdate.txt', 'w');
+		$last = fopen('../lastupdate.txt', 'w');
 		fwrite($last, time());
 		fclose($last);
 	}
