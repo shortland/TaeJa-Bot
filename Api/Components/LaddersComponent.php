@@ -1,9 +1,5 @@
 <?php
 
-require('Request.php');
-require('UserData.php');
-require('Db.php');
-
 class Ladders {
 
 	/** 
@@ -153,7 +149,7 @@ class Ladders {
 						}
 					}
 
-					$account = new UserData();
+					$account = new Users();
 
 					$account->setMmr($user->{'rating'});
 					$account->setWins($user->{'wins'});
@@ -191,7 +187,7 @@ class Ladders {
 			}
 		}
 		
-		$this->setLastUpdate();
+		// $this->setLastUpdate();
 	}
 
 	private function saveUser($account) {

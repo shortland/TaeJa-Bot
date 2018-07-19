@@ -1,6 +1,6 @@
 <?php
 
-class UserData {
+class Users {
 	
 	private $mmr;
 
