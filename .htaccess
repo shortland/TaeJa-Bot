@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /
+
+<Files 'config.ini'>
+Order Allow,Deny
+Deny from all
+</Files>
+
+Options All -Indexes
