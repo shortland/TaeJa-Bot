@@ -1,0 +1,29 @@
+# US server updates
+0 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=0&server=US" >/dev/null 2>&1
+2 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=1&server=US" >/dev/null 2>&1
+4 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=2&server=US" >/dev/null 2>&1
+6 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=3&server=US" >/dev/null 2>&1
+8 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=4&server=US" >/dev/null 2>&1
+10 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=5&server=US" >/dev/null 2>&1
+12 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=6&server=US" >/dev/null 2>&1
+
+# KR server updates
+14 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=0&server=KR" >/dev/null 2>&1
+16 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=1&server=KR" >/dev/null 2>&1
+18 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=2&server=KR" >/dev/null 2>&1
+20 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=3&server=KR" >/dev/null 2>&1
+22 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=4&server=KR" >/dev/null 2>&1
+24 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=5&server=KR" >/dev/null 2>&1
+26 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=6&server=KR" >/dev/null 2>&1
+
+# EU server updates
+28 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=0&server=EU" >/dev/null 2>&1
+30 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=1&server=EU" >/dev/null 2>&1
+32 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=2&server=EU" >/dev/null 2>&1
+34 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=3&server=EU" >/dev/null 2>&1
+36 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=4&server=EU" >/dev/null 2>&1
+38 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=5&server=EU" >/dev/null 2>&1
+40 * * * * curl -s "http://138.197.50.244/TaeJa/Api/Ladders/?league=6&server=EU" >/dev/null 2>&1
+
+# Check for promoted clan members
+45 * * * * cd /var/www/html/TaeJa/Component/ && perl Promotion.pl ConFed >/dev/null 2>&1
