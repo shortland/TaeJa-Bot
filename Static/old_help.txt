@@ -1,0 +1,58 @@
+Full Commands:
+
+~roster
+~roster count (league,race)
+~roster (terran,zerg,protoss,random)
+~roster (grandmaster,master,diamond...)
+~roster export confed
+
+~player Shortland
+~player Shortland (terran, protoss zerg, random)
+~player Shortland (na,kr,eu)
+~player Shortland#95200
+~player Shortland#95200 (terran, protoss zerg, random)
+
+~bnet Shortland
+
+~clan confed
+
+~stream all
+~stream live
+~stream add shortl4ndo
+~stream remove shortl4ndo
+~stream alloff
+
+~bounds
+~bounds (na,eu,kr)
+
+~ctl
+
+~ping
+
+~shrug
+
+~kittens
+~kittens all
+~kittens pic
+
+~typing
+
+~h
+~hm
+~hangman
+
+===
+Admin commands
+===
+
+~clear Channel_ID_Here
+
+~sql CMD_HERE
+
+===
+To Do List Bot
+===
+
+~t
+~t new
+~t remove #
