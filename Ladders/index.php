@@ -6,7 +6,7 @@ require('Ladders.php');
 
 $header = new HeaderFlags('text', true);
 $params = new Parameters();
-$config = 'config.ini';
+$config = '../config.ini';
 
 try {
 	$server = $params->get('server');

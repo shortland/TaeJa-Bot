@@ -7,7 +7,7 @@ require('../Ladders/UserData.php');
 
 $header = new HeaderFlags('text/html', true);
 $params = new Parameters();
-$config = '../Ladders/config.ini';
+$config = '../config.ini';
 
 try {
     $clanTag = $params->get('clanTag');

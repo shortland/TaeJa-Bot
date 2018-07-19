@@ -1,0 +1,34 @@
+[battlenet_api]
+access_code = "1234567890"
+
+[players_database]
+username = "user"
+password = "pass"
+host = "localhost"
+database = "teamconfed"
+
+[discord]
+owner_id = "1234567890"
+client_id = "1234567890"
+token = "1234567890"
+use_discord = "1"
+trigger = "~"
+name = "TaeJa"
+playing = "Starcraft II"
+auto_reconnect = "1"
+verbose = "0"
+bot_version = "4.0.0"
+redirect_url = "http://example.com"
+
+
+[bot]
+root = "/var/www/html/TaeJa"
+url = "http://example.com/TaeJa"
+
+[servers]
+ConFed = "199730784393756672"
+TestTag = "299216024425988096"
+
+[servers_bot_announcements]
+ConFed = "344553753636241418"
+TestTag = "468595442549129218"
