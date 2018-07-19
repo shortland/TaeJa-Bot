@@ -20,7 +20,7 @@ binmode(STDOUT, ':utf8');
 
 sub sayPromotions {
     my ($url, $clanTag, $channel) = @_;
-    my $data = getData($url . '/Notifications/Promotion.php?clanTag=' . $clanTag);
+    my $data = getData($url . '/Api/?endpoint=promotions&clanTag=' . $clanTag);
     
     $data = decode_json($data);
 
@@ -45,12 +45,12 @@ sub sayPromotions {
                     "text": "These notifications occur once an hour at the 45th minute"
                 },
                 "author": {
-                    "icon_url": "' . $url . '/Static/Images/' . uc($user->{race}) . '.png",
+                    "icon_url": "' . $url . '/Api/Static/Images/' . uc($user->{race}) . '.png",
                     "name": "<' . $user->{clan_tag} . '> ' . $user->{name} . '",
                     "url": "http://' . $user->{server} . '.battle.net/sc2/en' . $user->{path}.'/"
                 },
                 "thumbnail": {
-                    "url": "' . $url . '/Static/League.php?league=' . ucfirst($user->{league}) . '",
+                    "url": "' . $url . '/Api/?endpoint=leagueimages&tier=1&league=' . ucfirst($user->{league}) . '",
                     "height": 60,
                     "width": 60
                 },

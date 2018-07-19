@@ -34,7 +34,7 @@ switch (strtolower($endpoint)) {
 		new LeagueImagesController($config, $params);
 		break;
 	default:
-		printf("Unknown endpoint [ladders|promotions]");
+		printf("Unknown endpoint [ladders|promotions|leagueimages]");
 		break;
 }
 
