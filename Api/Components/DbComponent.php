@@ -47,8 +47,12 @@ class Db {
     /**
      * @throws Exception
      */
-    public function doRawQuery(string $query, array $params = []) {
+    public function doRawQuery(string $query, array $params = [], bool $verbose = false) {
         $query = $this->addParams($query, $params);
+
+        if ($verbose) {
+            echo $query;
+        }
 
         if ($result = $this->connection->query($query)) {
             return $result;

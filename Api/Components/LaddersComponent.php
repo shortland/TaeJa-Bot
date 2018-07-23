@@ -180,16 +180,81 @@ class Ladders {
 					$account->setServerCode($this->serverCode);
 					$account->setLastUpdate(time());
 
+					$this->checkNewMember($account->getBattleTag(), ucfirst($account->getRace()), $account->getServer(), $account->getName(), $account->getClanTag());
+
 					$this->saveUser($account);
 
-					printf("Updated %s\n", $account->getName());
+					printf("Updated %s\n\n", $account->getName());
 				}
 			}
 		}
-		
-		// $this->setLastUpdate();
 	}
 
+	/**
+	 * Begin process of checking to see if someone recently join a clan
+	 * 
+	 * TODO: BUG: if they were in the clan already, but unranked, will throw error?
+	 * -> attempt to patch in commented section below
+	 */
+	private function checkNewMember($battleTag, $race, $server, $username, $currentClanTag) {
+		$fullBattleTag = ($battleTag . '\_' . $race . '\_' . $server . '\_' . $username);
+
+		$previousClanTag = $this->getClanTag($fullBattleTag);
+
+		/** 
+		 * attempt to fix the situation in which the person was in the clan already, \
+		 * but unranked -> then became ranked... it would 'see' it as if they just joined the clan even though they only just now got ranked. 
+		*/
+		if ($previousClanTag == 'untracked_user') {
+			// Was already in clan, but unranked so data wasn't tracked
+			// echo "[" . $currentClanTag . "] prev. [" . $previousClanTag . "]\n";
+		}
+		elseif ($currentClanTag != $previousClanTag) {
+			// Recently joined clan
+			echo "[" . $currentClanTag . "] prev. [" . $previousClanTag . "]\n";
+		}
+		elseif ($currentClanTag == $previousClanTag) {
+			// In the same clan
+			// echo "[" . $currentClanTag . "] prev. [" . $previousClanTag . "]\n";
+		} 
+		else {
+			// Not in a clan
+			// Not reached, instead hit at case 2 current != previous
+			// echo "[" . $currentClanTag . "] prev. [" . $previousClanTag . "]\n";
+		}
+	}
+
+	/**
+	 * Get a user's clantag which is stored in the Database (aka the clan_tag from previous update)
+	 */
+	private function getClanTag($battleTag) {
+		$this->db->connect();
+
+		$query = "
+			SELECT 
+				`clan_tag`
+			FROM 
+				`everyone`
+			WHERE
+				`battle_tag` = ?
+		";
+
+		$result = $this->db->doRawQuery($query, [$battleTag]);
+
+		$this->db->disconnect();
+
+		$row = $result->fetch_object();
+
+		if (is_null($row)) {
+			return "untracked_user";
+		}
+
+		return $row->{'clan_tag'};
+	}
+
+	/**
+	 * Save user's data to the db
+	 */
 	private function saveUser($account) {
 		$this->db->connect();
 
