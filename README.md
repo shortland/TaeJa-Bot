@@ -1,34 +1,24 @@
-THIS IS INCOMPLETE!!!!
+**Some commands have been temporarily ommited from this repository as I'm going through a complete refactorization and recode of this project before pushing the new changes.**
+
+TaeJa Bot
 ============
 
-SC2 Ranked Stats
-============
+TaeJa Bot is a Discord Bot for Starcraft II clans. It runs on the <a href='https://github.com/vsTerminus/Mojo-Discord'>Mojo::Discord</a> library. 
 
-"SC2 Ranked Stats" is a set of open source commands being used by a Discord bot "Taeja" (name may change) for viewing current season ranked details and statistics on players and clans in Starcraft 2.
+TaeJa Bot can help manage your clan or simply for viewing player statistics.
 
-
-Purpose
-============
-
-Anyone can suggest edits/pull requests for new features.
 
 Discord Command List
 ============
 ```bash
-list all commands here...
+
 ```
 
 Discord Command Usage
 ============
 ```bash
-~player <player name here>
+
 ```
-
-<img src="https://i.imgur.com/Do0AJk2.png" width="600px" height="450px"></img>
-
-
-
-
 
 
 How It Works
@@ -38,4 +28,4 @@ Rather than querying Blizzard's API everytime the bot is used, an hourly job exe
 
 With this system, the bot can provide more generalized and insightful view on data that would otherwise be near-impossible to classify from a straightup query of Blizzards API.
 
-Categorization and querying of Clan Tags, Player Names, Player Battle Tags are not possible with Blizzards API alone.
+Categorization and querying of Clan Tags, Player Names, Player Battle Tags are not possible with Blizzard's API alone.
