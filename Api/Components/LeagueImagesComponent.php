@@ -30,6 +30,8 @@ class LeagueImages {
         $src = imagecreatefrompng(sprintf("Static/Images/%s.png", ucfirst($this->league)));
         $dest = imagecreatetruecolor($width, $height);
         
+        header("Content-type: image/png");
+
         $im = imagecreatetruecolor(55, 30);
         $black = imagecolorallocate($im, 0, 0, 0);
         imagecolortransparent($dest, $black);
