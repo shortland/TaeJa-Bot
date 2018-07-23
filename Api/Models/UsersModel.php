@@ -58,6 +58,8 @@ class Users {
 
 	private $lastUpdate;
 
+	private $alertedClan;
+
 	public function getLastUpdate() {
 		return $this->lastUpdate;
 	}
@@ -282,6 +284,14 @@ class Users {
 		$this->tier = $tier;
 	}
 
+	public function getAlertedClan() {
+		return $this->alertedClan;
+	}
+
+	public function setAlertedClan($alertedClan) {
+		$this->alertedClan = $alertedClan;
+	}
+
 	/**
 	 * Returns this object as an array without keys
 	 */
@@ -314,6 +324,7 @@ class Users {
 			$this->getClanDecalUrl(),
 			$this->getServer(),
 			$this->getLastUpdate(),
+			$this->getAlertedClan(),
 		];
 	}
 
@@ -350,6 +361,7 @@ class Users {
 			'clan_decal_url' 			=> $this->getClanDecalUrl(),
 			'server'					=> $this->getServer(),
 			'last_update'				=> $this->getLastUpdate(),
+			'alerted_clan'				=> $this->getAlertedClan(),
 		];
 	}
 }

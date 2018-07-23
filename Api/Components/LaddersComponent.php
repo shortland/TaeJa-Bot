@@ -180,7 +180,9 @@ class Ladders {
 					$account->setServerCode($this->serverCode);
 					$account->setLastUpdate(time());
 
-					$this->checkNewMember($account->getBattleTag(), ucfirst($account->getRace()), $account->getServer(), $account->getName(), $account->getClanTag());
+					$alertedClan = $this->checkNewMember($account->getBattleTag(), ucfirst($account->getRace()), $account->getServer(), $account->getName(), $account->getClanTag());
+					$account->setAlertedClan($alertedClan);
+
 
 					$this->saveUser($account);
 
@@ -212,6 +214,7 @@ class Ladders {
 		elseif ($currentClanTag != $previousClanTag) {
 			// Recently joined clan
 			echo "[" . $currentClanTag . "] prev. [" . $previousClanTag . "]\n";
+			return 1;
 		}
 		elseif ($currentClanTag == $previousClanTag) {
 			// In the same clan
@@ -222,6 +225,8 @@ class Ladders {
 			// Not reached, instead hit at case 2 current != previous
 			// echo "[" . $currentClanTag . "] prev. [" . $previousClanTag . "]\n";
 		}
+
+		return 0;
 	}
 
 	/**
@@ -285,7 +290,8 @@ class Ladders {
 			`clan_icon_url`, 
 			`clan_decal_url`, 
 			`server`,
-			`last_update`
+			`last_update`,
+			`alerted_clan`
 		";
 
 		$updateColumns = preg_replace('/\`,|\`\s|\`\z|\`\n/', '` = ?,', $columnNames);
@@ -295,7 +301,7 @@ class Ladders {
 			INSERT INTO `everyone` 
 				( $columnNames )
 			VALUES 
-				(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+				(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
 			ON DUPLICATE KEY UPDATE 
 				$updateColumns
 		";
