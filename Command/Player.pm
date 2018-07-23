@@ -14,6 +14,7 @@ use Component::Db;
 use Encode;
 use MIME::Base64;
 use experimental 'smartmatch';
+use JSON;
 
 use utf8;
 binmode(STDOUT, ':utf8');
@@ -106,7 +107,16 @@ sub cmd_player
         $result = "No more results";
     }
 
-    $discord->send_message($channel, $result);
+    eval 
+    {
+        my $json = decode_json($result);
+        $discord->send_message($channel, $json);
+    };
+    if ($@)
+    {
+        #say $@;
+        $discord->send_message($channel, $result);
+    }
 }
 
 sub search_map 
@@ -159,6 +169,96 @@ sub search_map
             get_server_emoji($player->{'server'}),
             $player->{'mmr'}
         );
+    }
+
+    if ($amount eq 1) {
+        foreach my $battle_tag (keys %{$data}) {
+            my $player = $data->{$battle_tag};
+            
+            my $clan_tag = "";
+            if ($player->{'clan_tag'} ne '') {
+                $clan_tag = '[' . $player->{'clan_tag'} . ']';
+            }
+
+            my $battle_tag = $player->{battle_tag};
+            ($battle_tag) = ($battle_tag =~ m/(^[\w\d\W]+#\d+)/);
+            $battle_tag =~ s/'//g;
+            
+            my $base_api_url = $self->{'discord'}->{'gw'}->{'bot'}->{'bot_path'}->{'url'};
+            
+            $response =  '{
+                "content": "", 
+                "embed": {
+                    "footer": {
+                        "text": "User last updated: ' . (scalar localtime $player->{'last_update'}) . '"
+                    }, 
+                    "author": {
+                        "icon_url": "' . $base_api_url . '/Api/?endpoint=raceimages&race=' . ucfirst($player->{'race'}) . '", 
+                        "name": "' . $clan_tag . ' ' . $player->{'name'} . '", 
+                        "url": "http://' . $player->{'server'} . '.battle.net/sc2/en' . $player->{'path'} . '/"
+                    }, 
+                    "thumbnail": {
+                        "url": "' . $base_api_url . '/Api/?endpoint=leagueimages&tier=1&league=' . ucfirst($player->{'league'}) . '", 
+                        "height": 60, 
+                        "width": 60
+                    }, 
+                    "type": "rich", 
+                    "color": 4343284, 
+                    "fields": [
+                        {
+                            "name": "Profile:", 
+                            "value": "*http://' . $player->{'server'} . '.battle.net/sc2/en' . $player->{'path'} . '/*", 
+                            "inline": 0
+                        },
+                        {
+                            "name": "Ranked FTW:", 
+                            "value": "*http://www.rankedftw.com/search/?name=http://' . $player->{'server'} . '.battle.net/sc2/en' . $player->{'path'} . '/*", 
+                            "inline": 0
+                        }, 
+                        {
+                            "name": "Tier:", 
+                            "value": "*' . $player->{'tier'} . '*", 
+                            "inline": 1
+                        }, 
+                        {
+                            "name": "MMR:", 
+                            "value": "*' . $player->{'mmr'} . '*", 
+                            "inline": 1
+                        }, 
+                        {
+                            "name": "Wins:", 
+                            "value": "*' . $player->{'wins'} . '*", 
+                            "inline": 1
+                        }, 
+                        {
+                            "name": "Losses:", 
+                            "value": "*' . $player->{'losses'} . '*", 
+                            "inline": 1
+                        }, 
+                        {
+                            "name": "Longest Win Streak:", 
+                            "value": "*' . $player->{'longest_win_streak'} . '*", 
+                            "inline": 1
+                        }, 
+                        {
+                            "name": "Current Win Streak:", 
+                            "value": "*' . $player->{'current_win_streak'} . '*", 
+                            "inline": 1
+                        }, 
+                        {
+                            "name": "Last 1v1:", 
+                            "value": "*' . (scalar localtime $player->{'last_played_time_stamp'}) . '*", 
+                            "inline": 1
+                        }, 
+                        {
+                            "name": "BattleNet Tag:", 
+                            "value": "*test*", 
+                            "inline": 1
+                        }
+                    ]
+                }
+            }';
+        }
     }
 
     if ($amount > 15) {

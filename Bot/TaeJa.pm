@@ -50,6 +50,15 @@ sub new
     $self->{'client_id'} = $params{'discord'}->{'client_id'};
     $self->{'webhook_name'} = $params{'discord'}->{'webhook_name'};
     $self->{'webhook_avatar'} = $params{'discord'}->{'webhook_avatar'};
+
+    # BNet Api
+    $self->{'battlenet_api'} = $params{'battlenet_api'}->{'access_code'};
+
+    # Path
+    $self->{'bot_path'} = {
+        'path' => $params{'bot_path'}->{'root'},
+        'url' => $params{'bot_path'}->{'url'}
+    };
     
     # Db
     $self->{'users_database'} = {
