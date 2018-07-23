@@ -10,6 +10,7 @@ require('Models/UsersModel.php');
 require('Controllers/LaddersController.php');
 require('Controllers/PromotionsController.php');
 require('Controllers/LeagueImagesController.php');
+require('Controllers/RaceImagesController.php');
 
 $header = new Header('text', true);
 $params = new Parameters();
@@ -33,8 +34,11 @@ switch (strtolower($endpoint)) {
 	case 'leagueimages':
 		new LeagueImagesController($config, $params);
 		break;
+	case 'raceimages':
+		new RaceImagesController($config, $params);
+		break;
 	default:
-		printf("Unknown endpoint [ladders|promotions|leagueimages]");
+		printf("Unknown endpoint [ladders|promotions|leagueimages|raceimages]");
 		break;
 }
 
