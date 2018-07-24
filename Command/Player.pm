@@ -26,7 +26,7 @@ use Data::Dumper;
 my $command = "Player";
 my $access = 0; # Public
 my $description = "Search up a Starcraft player by their in-game name";
-my $pattern = '^(player) ?(.*)$';
+my $pattern = '^(player|bnet) ?(.*)$';
 my $function = \&cmd_player;
 my $usage = <<EOF;
 ```~player shortland```
@@ -89,6 +89,11 @@ sub cmd_player
     my $pattern = $self->{'pattern'};
     $args =~ s/$pattern/$2/i;
 
+    my $main_search = 'name';
+    if ($1 eq 'bnet') {
+        $main_search = 'battle_tag'
+    }
+
     my $discord = $self->{'discord'};
     my $replyto = '<@' . $author->{'id'} . '>';
 
@@ -101,10 +106,10 @@ sub cmd_player
         return;
     }
 
-    my $result = search_map($map, $self);
+    my $result = search_map($map, $main_search, $self);
 
     if ($result eq "\n") {
-        $result = "No more results";
+        $result = "No results";
     }
 
     eval 
@@ -121,13 +126,21 @@ sub cmd_player
 
 sub search_map 
 {
-    my ($map, $self) = @_;
+    my ($map, $main_search, $self) = @_;
 
     my $conn = create_connection($self);
 
-    my $select_base = 'SELECT * FROM `everyone` WHERE `name`';
-    
-    my $count_base = 'SELECT COUNT(*) FROM `everyone` WHERE `name`';
+    my $select_base;
+    my $count_base;
+    if ($main_search eq 'battle_tag') {
+        #SELECT *  FROM `everyone` WHERE `battle_tag` REGEXP '^[^\\_]*maru' ORDER BY `mmr`  DESC
+        $select_base = 'SELECT * FROM `everyone` WHERE `battle_tag` REGEXP';
+        $count_base = 'SELECT COUNT(*) FROM `everyone` WHERE `battle_tag` REGEXP';
+    }
+    else {
+        $select_base = 'SELECT * FROM `everyone` WHERE `name`';
+        $count_base = 'SELECT COUNT(*) FROM `everyone` WHERE `name`';
+    }
 
     if (!defined $map->{'offset'}) {
         $map->{'offset'} = 0;
@@ -142,10 +155,21 @@ sub search_map
         }
     }
 
-    my $select_query = $select_base . " LIKE \"\%" . $map->{'name'} . "\%\" " . $where;
+    my $select_query;
+    my $count_query;
+    if ($main_search eq 'battle_tag') {
+        $select_query = $select_base . " '^[^\\_]*" . $map->{'name'} . "' " . $where;
+
+        $count_query = $count_base . " '^[^\\_]*" . $map->{'name'} . "' " . $where;
+    }
+    else {
+        $select_query = $select_base . " LIKE \"\%" . $map->{'name'} . "\%\" " . $where;
+
+        $count_query = $count_base . " LIKE \"\%" . $map->{'name'} . "\%\" " . $where;
+    }
+
     $select_query .= "ORDER BY `mmr` DESC LIMIT " . $map->{'offset'} . ", 15";
 
-    my $count_query = $count_base . " LIKE \"\%" . $map->{'name'} . "\%\" " . $where;
     my $amount = $conn->do_select($count_query, 'COUNT(*)');
     $amount = (keys %{$amount})[0];
 
@@ -180,9 +204,11 @@ sub search_map
                 $clan_tag = '[' . $player->{'clan_tag'} . ']';
             }
 
-            my $battle_tag = $player->{battle_tag};
+            my $battle_tag = $player->{'battle_tag'};
+            ($battle_tag) = ($battle_tag =~ m/^([\w\d\W]+)\\_[\w+]/);
             ($battle_tag) = ($battle_tag =~ m/(^[\w\d\W]+#\d+)/);
             $battle_tag =~ s/'//g;
+            say $battle_tag;
             
             my $base_api_url = $self->{'discord'}->{'gw'}->{'bot'}->{'bot_path'}->{'url'};
             
@@ -206,7 +232,7 @@ sub search_map
                     "color": 4343284, 
                     "fields": [
                         {
-                            "name": "Profile:", 
+                            "name": "Battle Net:", 
                             "value": "*http://' . $player->{'server'} . '.battle.net/sc2/en' . $player->{'path'} . '/*", 
                             "inline": 0
                         },
@@ -252,7 +278,7 @@ sub search_map
                         }, 
                         {
                             "name": "BattleNet Tag:", 
-                            "value": "*test*", 
+                            "value": "*' . $battle_tag . '*", 
                             "inline": 1
                         }
                     ]
