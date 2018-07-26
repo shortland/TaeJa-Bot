@@ -27,7 +27,7 @@ class Header {
 				header('Content-Type: text/html; charset=utf-8');
 				break;
 			case 'text':
-				header('Content-Type: text; charset=utf-8');
+				header('Content-Type: text/plain; charset=utf-8');
 				break;
 			case 'text/html':
 				header('Content-Type: text/html; charset=utf-8');
@@ -36,7 +36,7 @@ class Header {
 				header('Content-Type: image/gif; charset=utf-8');
 				break;
 			default:
-				header('Content-Type: text; charset=utf-8');
+				header('Content-Type: text/plain; charset=utf-8');
 		}
 		
 		if ($this->displayErrors) {
