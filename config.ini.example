@@ -1,27 +1,26 @@
-[battlenet_api]
-access_code = "1234567890"
-
-[players_database]
-username = "user"
-password = "pass"
-host = "localhost"
-database = "teamconfed"
-
 [discord]
-owner_id = "1234567890"
-client_id = "1234567890"
-token = "1234567890"
+owner_id = "123456789"
 use_discord = "1"
-trigger = "~"
+client_id = "123456789"
+token = "123456789"
 name = "TaeJa"
 playing = "Starcraft II"
+trigger = "~"
+redirect_url = "http://example.com/TaeJa"
 auto_reconnect = "1"
-verbose = "0"
-bot_version = "4.0.0"
-redirect_url = "http://example.com"
+verbose = "1"
+learn = "0"
 
+[database]
+username = "12345"
+password = "67890"
+host = "localhost"
+database = "dbname"
 
-[bot]
+[battlenet_api]
+access_code = "34123516712356223451"
+
+[bot_path]
 root = "/var/www/html/TaeJa"
 url = "http://example.com/TaeJa"
 

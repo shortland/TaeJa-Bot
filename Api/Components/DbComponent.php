@@ -13,7 +13,7 @@ class Db {
     private $connection;
 
     public function __construct(array $configData) {
-        $dbConfig = $configData['players_database'];
+        $dbConfig = $configData['database'];
         $this->username = $dbConfig['username'];
         $this->password = $dbConfig['password'];
         $this->host = $dbConfig['host'];
