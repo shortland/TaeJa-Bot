@@ -11,6 +11,8 @@ require('Controllers/LaddersController.php');
 require('Controllers/PromotionsController.php');
 require('Controllers/LeagueImagesController.php');
 require('Controllers/RaceImagesController.php');
+require('Controllers/BattleNetController.php');
+require('Controllers/SmurfsController.php');
 
 $header = new Header('text', true);
 $params = new Parameters();
@@ -37,8 +39,14 @@ switch (strtolower($endpoint)) {
 	case 'raceimages':
 		new RaceImagesController($config, $params);
 		break;
+	case 'renewbattlenet':
+		new BattleNetController($config, $params);
+		break;
+	case 'smurfs':
+		new SmurfsController($config, $params);
+		break;
 	default:
-		printf("Unknown endpoint [ladders|promotions|leagueimages|raceimages]");
+		printf("Unknown endpoint [ladders|promotions|leagueimages|raceimages|renewbattlenet|smurfs]");
 		break;
 }
 
