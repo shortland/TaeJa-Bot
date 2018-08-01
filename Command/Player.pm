@@ -36,13 +36,13 @@ my $usage = <<EOF;
     Shows a specific player with the specific SC2 tag (not same as battle.net tag!)
 
 ```~player shortland terran```
-    Shows player(s) with specified name and race [terran,zerg,protoss]
+    Shows player(s) with specified name and race [terran, zerg, protoss]
 
 ```~player shortland diamond```
-    Shows player(s) with specified name and league [grandmaster,master,diamond...]
+    Shows player(s) with specified name and league [grandmaster, master, diamond...]
 
 ```~player shortland us```
-    Shows player(s) with specified name in the server [us,kr,eu]
+    Shows player(s) with specified name in the server [us, kr, eu]
 
 ```~player shortland 2```
     Shows player(s) with specified name, if there are multiple players with this name, will jump to 2nd page of results.
@@ -298,14 +298,13 @@ sub search_map
             $current_page = ($map->{'offset'} / 15) + 1;
         } 
         my $hidden = $amount - 15;
-        $response .= qq{
-            page: [$current_page/$max_pages]
-            **$amount** total results, **$hidden** hidden (**15** shown).
-            
-            To display a different page of results, use an numeric parameter.
-            i.e: ~player kira 3
-            The above command will skip the first 30 results (first two pages)
-        };
+        $response .= 
+            "Page: [$current_page/$max_pages]\n" .
+            "**$amount** total results, **$hidden** hidden (**15** shown).\n" .
+            "To display a different page of results, use an numeric parameter.\n" .
+            "i.e: ~player kira 3\n" .
+            "The above command will go to the third page of results.\n"
+        ;
     }
         
     return $response;
@@ -341,19 +340,20 @@ sub map_parameters
         'platinum',
         'gold',
         'silver',
-        'bronze'
+        'bronze',
     );
 
     my @races = (
         'terran',
         'zerg',
-        'protoss'
+        'protoss',
+        'random',
     );
 
     my @servers = (
         'us',
         'kr',
-        'eu'
+        'eu',
     );
 
     my %mapped = (
@@ -363,6 +363,8 @@ sub map_parameters
         'server' => undef,
         'offset' => undef,
     );
+
+    $mapped{'name'} = shift @parameters;
 
     foreach my $parameter (@parameters) {
         if ($parameter ~~ @leagues) {
@@ -378,12 +380,7 @@ sub map_parameters
             $mapped{'offset'} = ($parameter - 1) * 15;
         }
         else {
-            if (!defined $mapped{'name'}) {
-                $mapped{'name'} = $parameter;
-            }
-            else {
-                return sprintf("Unknown option '%s'", $parameter);
-            }
+            return sprintf("Unknown option '%s'", $parameter);
         }
     }
 
