@@ -170,45 +170,44 @@ sub search_map
 
     $select_query .= "ORDER BY `mmr` DESC LIMIT " . $map->{'offset'} . ", 15";
 
-    my $amount = $conn->do_select($count_query, 'COUNT(*)');
-    $amount = (keys %{$amount})[0];
+    my $amount = $conn->do_select($count_query);
+    $amount = @{@{$amount}[0]}[0];
 
-    my $data = $conn->do_select($select_query, 'battle_tag');
+    my $data = $conn->do_select($select_query);
 
     my $response = "\n";
 
     return $response if $map->{'offset'} > $amount;
 
-    foreach my $battle_tag (keys %{$data}) {
-        my $player = $data->{$battle_tag};
+    foreach my $user_data (@{$data}) {
+        my @user_data = @{$user_data};
         my $clan_tag = "";
-        if ($player->{'clan_tag'} ne '') {
-            $clan_tag = '[' . $player->{'clan_tag'} . ']';
+        if ($user_data[23] ne '') { #clan_tag
+            $clan_tag = '[' . $user_data[23] . ']';
         }
         $response .= sprintf("%s%s%s %s %s (mmr: %s)\n", 
-            get_race_emoji($player->{'race'}),
-            get_league_emoji($player->{'league'}),
+            get_race_emoji($user_data[18]),
+            get_league_emoji($user_data[20]),
             $clan_tag,
-            $player->{'name'},
-            get_server_emoji($player->{'server'}),
-            $player->{'mmr'}
+            $user_data[16],
+            get_server_emoji($user_data[27]),
+            $user_data[0]
         );
     }
 
     if ($amount eq 1) {
-        foreach my $battle_tag (keys %{$data}) {
-            my $player = $data->{$battle_tag};
-            
+        foreach my $user_data (@{$data}) {
+            my @user_data = @{$user_data};         
             my $clan_tag = "";
-            if ($player->{'clan_tag'} ne '') {
-                $clan_tag = '[' . $player->{'clan_tag'} . ']';
+            if ($user_data[23] ne '') {
+                $clan_tag = '[' . $user_data[23] . ']';
             }
 
-            my $battle_tag = $player->{'battle_tag'};
+            my $battle_tag = $user_data[19];
             ($battle_tag) = ($battle_tag =~ m/^([\w\d\W]+)\\_[\w+]/);
             ($battle_tag) = ($battle_tag =~ m/(^[\w\d\W]+#\d+)/);
             $battle_tag =~ s/'//g;
-            say $battle_tag;
+            #say $battle_tag;
             
             my $base_api_url = $self->{'discord'}->{'gw'}->{'bot'}->{'bot_path'}->{'url'};
             
@@ -216,15 +215,15 @@ sub search_map
                 "content": "", 
                 "embed": {
                     "footer": {
-                        "text": "User last updated: ' . (scalar localtime $player->{'last_update'}) . '"
+                        "text": "User last updated: ' . (scalar localtime $user_data[28]) . '"
                     }, 
                     "author": {
-                        "icon_url": "' . $base_api_url . '/Api/?endpoint=raceimages&race=' . ucfirst($player->{'race'}) . '", 
-                        "name": "' . $clan_tag . ' ' . $player->{'name'} . '", 
-                        "url": "http://' . $player->{'server'} . '.battle.net/sc2/en' . $player->{'path'} . '/"
+                        "icon_url": "' . $base_api_url . '/Api/?endpoint=raceimages&race=' . ucfirst($user_data[18]) . '", 
+                        "name": "' . $clan_tag . ' ' . $user_data[16] . '", 
+                        "url": "http://' . $user_data[27] . '.battle.net/sc2/en' . $user_data[17] . '/"
                     }, 
                     "thumbnail": {
-                        "url": "' . $base_api_url . '/Api/?endpoint=leagueimages&tier=1&league=' . ucfirst($player->{'league'}) . '", 
+                        "url": "' . $base_api_url . '/Api/?endpoint=leagueimages&tier=1&league=' . ucfirst($user_data[20]) . '", 
                         "height": 60, 
                         "width": 60
                     }, 
@@ -233,47 +232,47 @@ sub search_map
                     "fields": [
                         {
                             "name": "Battle Net:", 
-                            "value": "*http://' . $player->{'server'} . '.battle.net/sc2/en' . $player->{'path'} . '/*", 
+                            "value": "*http://' . $user_data[27] . '.battle.net/sc2/en' . $user_data[17] . '/*", 
                             "inline": 0
                         },
                         {
                             "name": "Ranked FTW:", 
-                            "value": "*http://www.rankedftw.com/search/?name=http://' . $player->{'server'} . '.battle.net/sc2/en' . $player->{'path'} . '/*", 
+                            "value": "*http://www.rankedftw.com/search/?name=http://' . $user_data[27] . '.battle.net/sc2/en' . $user_data[17] . '/*", 
                             "inline": 0
                         }, 
                         {
                             "name": "Tier:", 
-                            "value": "*' . $player->{'tier'} . '*", 
+                            "value": "*' . $user_data[21] . '*", 
                             "inline": 1
                         }, 
                         {
                             "name": "MMR:", 
-                            "value": "*' . $player->{'mmr'} . '*", 
+                            "value": "*' . $user_data[0] . '*", 
                             "inline": 1
                         }, 
                         {
                             "name": "Wins:", 
-                            "value": "*' . $player->{'wins'} . '*", 
+                            "value": "*' . $user_data[1] . '*", 
                             "inline": 1
                         }, 
                         {
                             "name": "Losses:", 
-                            "value": "*' . $player->{'losses'} . '*", 
+                            "value": "*' . $user_data[2] . '*", 
                             "inline": 1
                         }, 
                         {
                             "name": "Longest Win Streak:", 
-                            "value": "*' . $player->{'longest_win_streak'} . '*", 
+                            "value": "*' . $user_data[6] . '*", 
                             "inline": 1
                         }, 
                         {
                             "name": "Current Win Streak:", 
-                            "value": "*' . $player->{'current_win_streak'} . '*", 
+                            "value": "*' . $user_data[7] . '*", 
                             "inline": 1
                         }, 
                         {
                             "name": "Last 1v1:", 
-                            "value": "*' . (scalar localtime $player->{'last_played_time_stamp'}) . '*", 
+                            "value": "*' . (scalar localtime $user_data[14]) . '*", 
                             "inline": 1
                         }, 
                         {
@@ -294,7 +293,7 @@ sub search_map
         }
         my $current_page = 1;
         if ($map->{'offset'} > 0) {
-            say $map->{'offset'};
+            #say $map->{'offset'};
             $current_page = ($map->{'offset'} / 15) + 1;
         } 
         my $hidden = $amount - 15;

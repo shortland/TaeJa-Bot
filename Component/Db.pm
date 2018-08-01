@@ -50,7 +50,8 @@ sub do_select {
     my $sth = $dbh->prepare("$query");
     say Dumper $query;
     $sth->execute();
-    return $sth->fetchall_hashref($unique);
+    my $data = $sth->fetchall_arrayref;
+    return $data;
 }
 
 # sub newConnection {
