@@ -97,7 +97,7 @@ sub cmd_player
     my $discord = $self->{'discord'};
     my $replyto = '<@' . $author->{'id'} . '>';
 
-    my @parameters = ($args =~ m/([\S]+)/g);
+    my @parameters = (lc($args) =~ m/([\S]+)/g);
     
     my $map = map_parameters(\@parameters);
 
