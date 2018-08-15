@@ -13,6 +13,8 @@ require('Controllers/LeagueImagesController.php');
 require('Controllers/RaceImagesController.php');
 require('Controllers/BattleNetController.php');
 require('Controllers/SmurfsController.php');
+require('Controllers/ClanSizeController.php');
+require('Controllers/BoundsController.php');
 
 $header = new Header('text', true);
 $params = new Parameters();
@@ -45,8 +47,14 @@ switch (strtolower($endpoint)) {
 	case 'smurfs':
 		new SmurfsController($config, $params);
 		break;
+	case 'clansize':
+		new ClanSizeController($config, $params);
+		break;
+	case 'bounds':
+		new BoundsController($config, $params);
+		break;
 	default:
-		printf("Unknown endpoint [ladders|promotions|leagueimages|raceimages|renewbattlenet|smurfs]");
+		printf("Unknown endpoint [ladders|promotions|leagueimages|raceimages|renewbattlenet|smurfs|clansize|bounds]");
 		break;
 }
 
