@@ -36,6 +36,8 @@ class Users {
 
 	private $gameCount;
 
+	private $realBattleTag;
+
 	private $battleTag;
 
 	private $clanId;
@@ -59,6 +61,8 @@ class Users {
 	private $lastUpdate;
 
 	private $alertedClan;
+
+	private $realName;
 
 	public function getLastUpdate() {
 		return $this->lastUpdate;
@@ -220,6 +224,14 @@ class Users {
 		$this->gameCount = $gameCount;
 	}
 
+	public function getRealBattleTag() {
+		return $this->realBattleTag;
+	}
+
+	public function setRealBattleTag($realBattleTag) {
+		$this->realBattleTag = $realBattleTag;
+	}
+
 	public function getBattleTag() {
 		return $this->battleTag;
 	}
@@ -292,6 +304,14 @@ class Users {
 		$this->alertedClan = $alertedClan;
 	}
 
+	public function getRealName() {
+		return $this->realName;
+	}
+
+	public function setRealName($realName) {
+		$this->realName = $realName;
+	}
+
 	/**
 	 * Returns this object as an array without keys
 	 */
@@ -314,6 +334,7 @@ class Users {
 			$this->getPath(), 
 			$this->getRace(), 
 			$this->getGameCount(), 
+			$this->getRealBattleTag(),
 			$this->getBattleTag() . '\_' . $this->getRace() . '\_' . $this->getServer() . '\_' . $this->getName(), 
 			$this->getLeague(), 
 			$this->getTier(), 
@@ -325,6 +346,7 @@ class Users {
 			$this->getServer(),
 			$this->getLastUpdate(),
 			$this->getAlertedClan(),
+			$this->getRealName(),
 		];
 	}
 
@@ -351,6 +373,7 @@ class Users {
 			'path' 						=> $this->getPath(),
 			'race' 						=> $this->getRace(),
 			'game_count' 				=> $this->getGameCount(),
+			'real_battle_tag' 			=> $this->getRealBattleTag(),
 			'battle_tag' 				=> $this->getBattleTag() . '\_' . $this->getRace() . '\_' . $this->getServer() . '\_' . $this->getName(), 
 			'league' 					=> $this->getLeague(),
 			'tier' 						=> $this->getTier(),
@@ -362,6 +385,7 @@ class Users {
 			'server'					=> $this->getServer(),
 			'last_update'				=> $this->getLastUpdate(),
 			'alerted_clan'				=> $this->getAlertedClan(),
+			'real_name'					=> $this->getRealName(),
 		];
 	}
 }

@@ -168,6 +168,7 @@ class Ladders {
 					$account->setPath(addslashes($user->{'member'}[0]->{'legacy_link'}->{'path'}));
 					$account->setRace($user->{'member'}[0]->{'played_race_count'}[0]->{'race'}->{'en_US'});
 					$account->setGameCount($user->{'member'}[0]->{'played_race_count'}[0]->{'count'});
+					$account->setRealBattleTag($user->{'member'}[0]->{'character_link'}->{'battle_tag'});
 					$account->setBattleTag($user->{'member'}[0]->{'character_link'}->{'battle_tag'});
 					$account->setLeague($this->leagues[$this->league]);
 					$account->setTier($tier + 1);
@@ -179,6 +180,7 @@ class Ladders {
 					$account->setServer($this->server);
 					$account->setServerCode($this->serverCode);
 					$account->setLastUpdate(time());
+					$account->setRealName(addslashes($user->{'member'}[0]->{'legacy_link'}->{'name'}));
 
 					$alertedClan = $this->checkNewMember($account->getBattleTag(), ucfirst($account->getRace()), $account->getServer(), $account->getName(), $account->getClanTag());
 					$account->setAlertedClan($alertedClan);
@@ -280,7 +282,8 @@ class Ladders {
 			`name`, 
 			`path`, 
 			`race`, 
-			`game_count`, 
+			`game_count`,
+			`real_battle_tag`, 
 			`battle_tag`, 
 			`league`, 
 			`tier`, 
@@ -291,7 +294,8 @@ class Ladders {
 			`clan_decal_url`, 
 			`server`,
 			`last_update`,
-			`alerted_clan`
+			`alerted_clan`,
+			`real_name`
 		";
 
 		$updateColumns = preg_replace('/\`,|\`\s|\`\z|\`\n/', '` = ?,', $columnNames);
@@ -301,7 +305,7 @@ class Ladders {
 			INSERT INTO `everyone` 
 				( $columnNames )
 			VALUES 
-				(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+				(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
 			ON DUPLICATE KEY UPDATE 
 				$updateColumns
 		";
@@ -358,11 +362,11 @@ class Ladders {
 	 * @TODO: make have a field in constructor for the path to the file instead
 	 * of hardcoding it here?
 	 */
-	private function setLastUpdate() {
-		$last = fopen('../lastupdate.txt', 'w');
-		fwrite($last, time());
-		fclose($last);
-	}
+	// private function setLastUpdate() {
+	// 	$last = fopen('../lastupdate.txt', 'w');
+	// 	fwrite($last, time());
+	// 	fclose($last);
+	// }
 
 	/**
 	 * @throws Exception
