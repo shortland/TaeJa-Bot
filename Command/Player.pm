@@ -182,15 +182,18 @@ sub search_map
     foreach my $user_data (@{$data}) {
         my @user_data = @{$user_data};
         my $clan_tag = "";
-        if ($user_data[23] ne '') { #clan_tag
-            $clan_tag = '[' . $user_data[23] . ']';
+        if ($user_data[24] ne '') { #clan_tag
+            $clan_tag = '[' . $user_data[24] . ']';
         }
+        my $username = $user_data[16];
+        chop($username);
+        chop($username);
         $response .= sprintf("%s%s%s %s %s (mmr: %s)\n", 
             get_race_emoji($user_data[18]),
-            get_league_emoji($user_data[20]),
+            get_league_emoji($user_data[21]),
             $clan_tag,
-            $user_data[16],
-            get_server_emoji($user_data[27]),
+            $username,
+            get_server_emoji($user_data[28]),
             $user_data[0]
         );
     }
@@ -199,15 +202,15 @@ sub search_map
         foreach my $user_data (@{$data}) {
             my @user_data = @{$user_data};         
             my $clan_tag = "";
-            if ($user_data[23] ne '') {
-                $clan_tag = '[' . $user_data[23] . ']';
+            if ($user_data[24] ne '') {
+                $clan_tag = '[' . $user_data[24] . ']';
             }
+            $clan_tag = "";
 
-            my $battle_tag = $user_data[19];
+            my $battle_tag = $user_data[20];
             ($battle_tag) = ($battle_tag =~ m/^([\w\d\W]+)\\_[\w+]/);
             ($battle_tag) = ($battle_tag =~ m/(^[\w\d\W]+#\d+)/);
             $battle_tag =~ s/'//g;
-            #say $battle_tag;
             
             my $base_api_url = $self->{'discord'}->{'gw'}->{'bot'}->{'bot_path'}->{'url'};
             
@@ -215,15 +218,15 @@ sub search_map
                 "content": "", 
                 "embed": {
                     "footer": {
-                        "text": "User last updated: ' . (scalar localtime $user_data[28]) . '"
+                        "text": "User last updated: ' . (scalar localtime $user_data[29]) . '"
                     }, 
                     "author": {
                         "icon_url": "' . $base_api_url . '/Api/?endpoint=raceimages&race=' . ucfirst($user_data[18]) . '", 
                         "name": "' . $clan_tag . ' ' . $user_data[16] . '", 
-                        "url": "http://' . $user_data[27] . '.battle.net/sc2/en' . $user_data[17] . '/"
+                        "url": "http://' . $user_data[28] . '.battle.net/sc2/en' . $user_data[17] . '/"
                     }, 
                     "thumbnail": {
-                        "url": "' . $base_api_url . '/Api/?endpoint=leagueimages&tier=1&league=' . ucfirst($user_data[20]) . '", 
+                        "url": "' . $base_api_url . '/Api/?endpoint=leagueimages&tier=1&league=' . ucfirst($user_data[21]) . '", 
                         "height": 60, 
                         "width": 60
                     }, 
@@ -232,17 +235,17 @@ sub search_map
                     "fields": [
                         {
                             "name": "Battle Net:", 
-                            "value": "*http://' . $user_data[27] . '.battle.net/sc2/en' . $user_data[17] . '/*", 
+                            "value": "*http://' . $user_data[28] . '.battle.net/sc2/en' . $user_data[17] . '/*", 
                             "inline": 0
                         },
                         {
                             "name": "Ranked FTW:", 
-                            "value": "*http://www.rankedftw.com/search/?name=http://' . $user_data[27] . '.battle.net/sc2/en' . $user_data[17] . '/*", 
+                            "value": "*http://www.rankedftw.com/search/?name=http://' . $user_data[28] . '.battle.net/sc2/en' . $user_data[17] . '/*", 
                             "inline": 0
                         }, 
                         {
                             "name": "Tier:", 
-                            "value": "*' . $user_data[21] . '*", 
+                            "value": "*' . $user_data[22] . '*", 
                             "inline": 1
                         }, 
                         {
@@ -305,7 +308,7 @@ sub search_map
             "The above command will go to the third page of results.\n"
         ;
     }
-        
+
     return $response;
 }
 
