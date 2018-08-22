@@ -14,6 +14,7 @@ require('Controllers/RaceImagesController.php');
 require('Controllers/BattleNetController.php');
 require('Controllers/SmurfsController.php');
 require('Controllers/BoundsController.php');
+require('Controllers/ExportClanController.php');
 
 $header = new Header('text', true);
 $params = new Parameters();
@@ -49,8 +50,11 @@ switch (strtolower($endpoint)) {
 	case 'bounds':
 		new BoundsController($config, $params);
 		break;
+	case 'exportclan':
+		new ExportClanController($config, $params);
+		break;
 	default:
-		printf("Unknown endpoint [ladders|promotions|leagueimages|raceimages|renewbattlenet|smurfs|bounds]");
+		printf("Unknown endpoint [ladders|promotions|leagueimages|raceimages|renewbattlenet|smurfs|bounds|exportclan]");
 		break;
 }
 

@@ -66,7 +66,7 @@ class BattleNet
             echo $code . " valid for 1 month";
         }
         else {
-            echo "Couldn't retrieve code. Please ensure correct configuration.";
+            echo "Couldn't retrieve access token. Please ensure correct configuration.\nTry refreshing page without 'code' parameter.";
         }
     }
 
