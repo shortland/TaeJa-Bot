@@ -14,6 +14,9 @@ use Command::Info;
 use Command::Say;
 
 use Command::Player;
+use Command::Clan;
+use Command::Bounds;
+use Command::Export;
 use Data::Dumper;
 
 # Fallback to "config.ini" if the user does not pass in a config file.
@@ -40,6 +43,9 @@ Command::Info->new          ('bot' => $bot);
 Command::Say->new           ('bot' => $bot);
 
 Command::Player->new        ('bot' => $bot);
+Command::Clan->new          ('bot' => $bot);
+Command::Bounds->new        ('bot' => $bot);
+Command::Export->new        ('bot' => $bot);
 
 # Start the bot
 $bot->start();
