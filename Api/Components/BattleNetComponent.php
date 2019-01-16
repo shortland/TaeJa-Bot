@@ -60,10 +60,10 @@ class BattleNet
     public function getNewAccessCode()
     {
         $data = $this->authorizeRoute();
-
+        // var_dump($data);
         if (property_exists($data, 'access_token')) {
             $code = $data->{'access_token'};
-            echo $code . " valid for 1 month";
+            echo $code . " valid for 1 month (this isn't auto-saved into the config! need to manually save it.)";
         }
         else {
             echo "Couldn't retrieve access token. Please ensure correct configuration.\nTry refreshing page without 'code' parameter.";
@@ -72,18 +72,16 @@ class BattleNet
 
     private function authorizeRoute()
     {
-        $codeUrl = sprintf(
-            "%s/token?client_id=%s&client_secret=%s&redirect_uri=%s&scope=sc2.profile&grant_type=authorization_code&code=%s", 
-            $this->baseUrl,
-            $this->key,
-            $this->secret,
+        $url = sprintf("%s/token", $this->baseUrl);
+        
+        $parameterData = sprintf(
+            "redirect_uri=%s&scope=sc2.profile&grant_type=authorization_code&code=%s", 
             $this->redirectUrl,
             $this->authorizeCode
         );
 
-        $data = $this->request->getJsonData($codeUrl);
+        $data = $this->request->postAuthData($url, $this->key, $this->secret, $parameterData);
 
         return $data;
     }
 }
-

@@ -41,6 +41,25 @@ class Request {
 	}
 
 	/**
+	 * Do an authenticated POST request
+	 * 
+	 * @var string $url
+	 * @var string $username
+	 * @var string $password
+	 * @var string $parameterData
+	 * @return JSON
+	 */
+	public function postAuthData($url, $username, $password, $parameterData = '', $asArray = FALSE) {
+		$this->setUrl($url);
+		curl_setopt($this->curlHandler, CURLOPT_POST, 1);
+		curl_setopt($this->curlHandler, CURLOPT_USERPWD, $username . ":" . $password);
+		curl_setopt($this->curlHandler, CURLOPT_POSTFIELDS, $parameterData);
+		$response = curl_exec($this->curlHandler);
+		$jsonResponse = json_decode($response, $asArray);
+		return $jsonResponse;
+	}
+
+	/**
 	 * Close the current instance of the curl handler.
 	 * If called, then you'd need to create a new Requests object to later call more urls.
 	 */
