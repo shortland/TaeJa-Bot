@@ -47,6 +47,11 @@ class Ladders {
 	 */
 	private $baseUrl;
 
+	/**
+	 * @var string
+	 */
+	private $regionId;
+
 	public function __construct(
 		string $configName,
 		string $server, 
@@ -68,12 +73,15 @@ class Ladders {
 		switch ($this->server) {
 			case 'us':
 				$this->serverCode = '00';
+				$this->regionId = '1';
 				break;
 			case 'eu':
 				$this->serverCode = '02';
+				$this->regionId = '2';
 				break;
 			case 'kr':
 				$this->serverCode = '01';
+				$this->regionId = '3';
 				break;
 		}
 
@@ -81,7 +89,7 @@ class Ladders {
 
 		$this->request = new Request();
 
-		$this->baseUrl = sprintf("https://%s.api.battle.net", $this->server);
+		$this->baseUrl = sprintf("https://%s.api.blizzard.com", $this->server);
 	}
 	
 	/**
@@ -92,8 +100,15 @@ class Ladders {
 
 		echo "Getting current season id\n";
 		$currentSeasonId = $this->request->getJsonData(
-			sprintf("%s/data/sc2/season/current?access_token=%s", $this->baseUrl, $this->accessToken)
-		)->{'id'};
+			sprintf("%s/sc2/ladder/season/1?access_token=%s", $this->baseUrl, $this->accessToken)
+		);
+
+		if (!property_exists($currentSeasonId, 'seasonId')) {
+			echo "Unable to get current seasonId. Actual response:\n";
+			var_dump($currentSeasonId);
+			exit();
+		}
+		$currentSeasonId = $currentSeasonId->{'seasonId'};
 
 		echo "Getting list of league ladder divisions\n";
 		$laddersData = $this->request->getJsonData(
@@ -123,53 +138,70 @@ class Ladders {
 				printf("Iterating though ladder division id %s\n", $ladderId);
 
 				$ladderContents = $this->request->getJsonData(
-					sprintf("%s/data/sc2/ladder/%s?access_token=%s", $this->baseUrl, $ladderId, $this->accessToken)
+					sprintf("%s/sc2/legacy/ladder/%s/%s?access_token=%s", $this->baseUrl, $this->regionId, $ladderId, $this->accessToken)
 				);
 
-				for ($userNum = 0; $userNum < count($ladderContents->{'team'}); ++$userNum) {
+				for ($userNum = 0; $userNum < count($ladderContents->{'ladderMembers'}); ++$userNum) {
 					$clanTag 		= '';
 					$clanId 		= '';
 					$clanName 		= '';
 					$clanIconUrl 	= '';
 					$clanDecalUrl 	= '';
 
-					$user = $ladderContents->{'team'}[$userNum];
-					
-					if (isset($user->{'member'}[0]->{'clan_link'}->{'clan_tag'})) {
-						$clanTag = $user->{'member'}[0]->{'clan_link'}->{'clan_tag'};
-						$clanId = $user->{'member'}[0]->{'clan_link'}->{'id'};
-						$clanName = $user->{'member'}[0]->{'clan_link'}->{'clan_name'};
-						
-						if (isset($user->{'member'}[0]->{'clan_link'}->{'icon_url'})) {
-							$clanIconUrl = $user->{'member'}[0]->{'clan_link'}->{'icon_url'};
-						}
+					$user = $ladderContents->{'ladderMembers'}[$userNum];
+					//var_dump($user);
+					if (isset($user->{'character'}->{'clanTag'})) {
+						$clanTag = $user->{'character'}->{'clanTag'};
+						$clanId = 0;
+						$clanName = $user->{'character'}->{'clanName'};
+						$clanIconUrl = "";
+						$clanDecalUrl = "";
+					}
+					$profileId = $user->{'character'}->{'id'};
+					$realm = $user->{'character'}->{'realm'};
 
-						if (isset($user->{'member'}[0]->{'clan_link'}->{'decal_url'})) {
-							$clanDecalUrl = $user->{'member'}[0]->{'clan_link'}->{'decal_url'};
+					$ladderDatas = $this->request->getJsonData(
+						sprintf(
+							"%s/sc2/profile/%s/%s/%s/ladder/%s?locale=en_US&access_token=%s",
+							$this->baseUrl,
+							$this->regionId,
+							$realm,
+							$profileId,
+							$ladderId,
+							$this->accessToken
+						)
+					)->{'ladderTeams'};
+
+					$ladderDataUser;
+					for ($ladderUserNum = 0; $ladderUserNum < count($ladderDatas); ++$ladderUserNum) {
+						if ($ladderDatas[$ladderUserNum]->{'teamMembers'}[0]->{'id'} == $profileId) {
+							$ladderDataUser = $ladderDatas[$ladderUserNum];
+							break;
 						}
 					}
 
-					$account = new Users();
+					//var_dump($ladderDataUser);
 
-					$account->setMmr($user->{'rating'});
-					$account->setWins($user->{'wins'});
-					$account->setLosses($user->{'losses'});
-					$account->setTies($user->{'ties'});
-					$account->setPoints($user->{'points'});
-					$account->setLongestWinStreak($user->{'longest_win_streak'});
-					$account->setCurrentWinStreak($user->{'current_win_streak'});
-					$account->setCurrentRank($user->{'current_rank'});
-					$account->setHighestRank($user->{'highest_rank'});
-					$account->setPreviousRank($user->{'previous_rank'});
-					$account->setJoinTimestamp($user->{'join_time_stamp'});
-					$account->setLastPlayedTimestamp($user->{'last_played_time_stamp'});
-					$account->setId($user->{'member'}[0]->{'legacy_link'}->{'id'});
-					$account->setName(addslashes($user->{'member'}[0]->{'legacy_link'}->{'name'}));
-					$account->setPath(addslashes($user->{'member'}[0]->{'legacy_link'}->{'path'}));
-					$account->setRace($user->{'member'}[0]->{'played_race_count'}[0]->{'race'}->{'en_US'});
-					$account->setGameCount($user->{'member'}[0]->{'played_race_count'}[0]->{'count'});
-					$account->setRealBattleTag($user->{'member'}[0]->{'character_link'}->{'battle_tag'});
-					$account->setBattleTag($user->{'member'}[0]->{'character_link'}->{'battle_tag'});
+					$account = new Users();
+					$account->setMmr($ladderDataUser->{'mmr'});
+					$account->setWins($ladderDataUser->{'wins'});
+					$account->setLosses($ladderDataUser->{'losses'});
+					$account->setTies(0); #?
+					$account->setPoints($ladderDataUser->{'points'});
+					$account->setLongestWinStreak(0); #?
+					$account->setCurrentWinStreak(0); #?
+					$account->setCurrentRank(0); #?
+					$account->setHighestRank($user->{'highestRank'});
+					$account->setPreviousRank($ladderDataUser->{'previousRank'});
+					$account->setJoinTimestamp($user->{'joinTimestamp'});
+					$account->setLastPlayedTimestamp(0); #?
+					$account->setId($profileId);
+					$account->setName(addslashes($ladderDataUser->{'teamMembers'}[0]->{'displayName'}));
+					$account->setPath(addslashes($user->{'character'}->{'profilePath'}));
+					$account->setRace($ladderDataUser->{'teamMembers'}[0]->{'favoriteRace'});
+					$account->setGameCount(($ladderDataUser->{'wins'} + $ladderDataUser->{'losses'}));
+					$account->setRealBattleTag(addslashes($user->{'character'}->{'profilePath'})); #?
+					$account->setBattleTag(addslashes($user->{'character'}->{'profilePath'})); #?
 					$account->setLeague($this->leagues[$this->league]);
 					$account->setTier($tier + 1);
 					$account->setClanId($clanId);
@@ -180,11 +212,10 @@ class Ladders {
 					$account->setServer($this->server);
 					$account->setServerCode($this->serverCode);
 					$account->setLastUpdate(time());
-					$account->setRealName(addslashes($user->{'member'}[0]->{'legacy_link'}->{'name'}));
+					$account->setRealName(addslashes($ladderDataUser->{'teamMembers'}[0]->{'displayName'}));
 
-					$alertedClan = $this->checkNewMember($account->getBattleTag(), ucfirst($account->getRace()), $account->getServer(), $account->getName(), $account->getClanTag());
-					$account->setAlertedClan($alertedClan);
-
+					//$alertedClan = $this->checkNewMember($account->getBattleTag(), ucfirst($account->getRace()), $account->getServer(), $account->getName(), $account->getClanTag());
+					$account->setAlertedClan(1);
 
 					$this->saveUser($account);
 
