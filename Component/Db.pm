@@ -42,7 +42,8 @@ sub connect
     return $self;
 }
 
-sub do_select {
+sub do_select 
+{
     my $self = shift;
     my $query = shift;
     my $unique = shift;
@@ -76,3 +77,5 @@ sub execSelectQuery {
     my ($queryString) = @_;
     
 }
+
+1;

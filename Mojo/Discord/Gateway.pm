@@ -277,6 +277,10 @@ sub on_finish
 
     $reason = $close{$code} if ( defined $code and (!defined $reason or length $reason == 0) and exists $close{$code} );
     $reason = "Unknown" unless defined $reason and length $reason > 0;
+    use Path::Tiny;
+    if ($reason eq 1006) {
+        path('status.txt')->spew('killed');
+    }
     say localtime(time) . " (on_finish) Websocket Connection Closed with Code $code ($reason)" if $self->verbose;
 
     if ( !defined $tx )

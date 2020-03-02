@@ -272,9 +272,12 @@ sub cache_guild_webhooks
         foreach my $hook (@{$json})
         {
             my $channel = $hook->{'channel_id'};
-            if ( $hook->{'name'} eq $self->webhook_name )
+            if (defined $self->webhook_name) 
             {
-                $self->{'webhooks'}{$channel} = $hook;
+                if ( $hook->{'name'} eq $self->webhook_name )
+                {
+                    $self->{'webhooks'}{$channel} = $hook;
+                }
             }
         }
     });

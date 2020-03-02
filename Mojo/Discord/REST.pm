@@ -201,8 +201,9 @@ sub create_webhook
 {
     my ($self, $channel, $params, $callback) = @_;
 
-    my $name = $params->{'name'};
-    my $avatar_file = $params->{'avatar'};
+    # TODO: Read this from config file
+    my $name = "TaeJa_Develop";
+    my $avatar_file = "/var/www/html/taeja.jpg";
 
     # Check the name is valid (2-100 chars)
     if ( length $name < 2 or length $name > 100 )
